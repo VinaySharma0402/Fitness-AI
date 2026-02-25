@@ -8,6 +8,9 @@ const links = [
     { to: '/progress', icon: '📈', label: 'Progress' },
     { to: '/measurements', icon: '📏', label: 'Measurements' },
     { to: '/habits', icon: '🔥', label: 'Habit Score' },
+    { to: '/analytics', icon: '📉', label: 'Analytics' },
+    { to: '/roadmap', icon: '🗺️', label: 'Roadmap' },
+    { to: '/report', icon: '📋', label: 'Report' },
     { to: '/chat', icon: '🤖', label: 'AI Coach' },
 ];
 

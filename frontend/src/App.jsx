@@ -9,6 +9,9 @@ import Progress from './pages/Progress';
 import Measurements from './pages/Measurements';
 import HabitScore from './pages/HabitScore';
 import AIChat from './pages/AIChat';
+import Analytics from './pages/Analytics';
+import Roadmap from './pages/Roadmap';
+import Report from './pages/Report';
 import AppShell from './components/AppShell';
 
 function ProtectedRoute({ children }) {
@@ -34,6 +37,9 @@ function App() {
                     <Route path="progress" element={<Progress />} />
                     <Route path="measurements" element={<Measurements />} />
                     <Route path="habits" element={<HabitScore />} />
+                    <Route path="analytics" element={<Analytics />} />
+                    <Route path="roadmap" element={<Roadmap />} />
+                    <Route path="report" element={<Report />} />
                     <Route path="chat" element={<AIChat />} />
                 </Route>
             </Routes>

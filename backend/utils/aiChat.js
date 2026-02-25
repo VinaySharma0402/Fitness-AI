@@ -208,6 +208,87 @@ const RULES = [
             return msg;
         }
     },
+
+    // ── #21 Premium Coaching: Deep Recovery Insights ──
+    {
+        keywords: ['recovery plan', 'deload', 'overtraining', 'burned out', 'need rest', 'training too much', 'overtrained'],
+        response: (ctx) => {
+            let msg = "🧘 **Recovery & Deload Analysis:**\n";
+            if (ctx.avgFatigue !== null) {
+                msg += `📊 Your avg fatigue: ${ctx.avgFatigue}/10 | Avg sleep: ${ctx.avgSleep || '—'}h | Avg stress: ${ctx.avgStress || '—'}/10\n`;
+                if (ctx.avgFatigue >= 7) {
+                    msg += "⚠️ **Deload recommended!** Your fatigue is high. Here's a recovery protocol:\n";
+                    msg += "• Reduce training volume by 40-50% this week\n• Keep weight the same, cut sets in half\n";
+                    msg += "• Prioritize sleep (aim for 9 hours)\n• Add stretching/yoga sessions\n";
+                } else if (ctx.avgFatigue >= 5) {
+                    msg += "🟡 Fatigue is moderate. Consider:\n";
+                    msg += "• Reduce intensity by 20% for 2-3 days\n• An extra rest day this week\n";
+                    msg += "• Focus on hydration and sleep quality\n";
+                } else {
+                    msg += "✅ Recovery looks solid! You can maintain or increase intensity.\n";
+                }
+            } else {
+                msg += "No energy data yet. Log your energy check-ins to get personalized recovery insights.\n";
+            }
+            msg += "• Signs of overtraining: persistent fatigue, decreased performance, mood changes, sleep issues.\n";
+            msg += "• Every 4-6 weeks, take a planned deload week (lighter volume).";
+            return msg;
+        }
+    },
+
+    // ── #21 Premium Coaching: Progress Review ──
+    {
+        keywords: ['how am i doing', 'my progress', 'review', 'assess', 'summary', 'report', 'overview', 'am i on track'],
+        response: (ctx) => {
+            let msg = "📊 **Your Fitness Progress Review:**\n";
+            if (ctx.weightChange !== null) {
+                msg += `⚖️ Weight: ${ctx.weightChange > 0 ? '+' : ''}${ctx.weightChange} kg since start\n`;
+            }
+            if (ctx.habitScore !== null) {
+                const grade = ctx.habitScore >= 80 ? 'A 🌟' : ctx.habitScore >= 60 ? 'B 👍' : ctx.habitScore >= 40 ? 'C ⚡' : 'D 😕';
+                msg += `📋 Habit Score: ${ctx.habitScore}% (Grade: ${grade})\n`;
+            }
+            if (ctx.streak > 0) msg += `🔥 Streak: ${ctx.streak} weeks consistent\n`;
+            if (ctx.dailyCalories) msg += `🍽️ Daily target: ${ctx.dailyCalories} kcal\n`;
+            if (ctx.avgFatigue !== null) {
+                msg += `⚡ Energy: Fatigue ${ctx.avgFatigue}/10, Sleep ${ctx.avgSleep || '—'}h\n`;
+            }
+            msg += "\n**Recommendations:**\n";
+            if (ctx.habitScore !== null && ctx.habitScore < 60) {
+                msg += "• Focus on consistency before intensity — aim for 80%+ adherence\n";
+            }
+            if (ctx.avgFatigue !== null && ctx.avgFatigue >= 7) {
+                msg += "• Your fatigue is high — consider more rest or a deload\n";
+            }
+            msg += "• Check the Report page for a detailed monthly breakdown\n";
+            msg += "• Visit Analytics for trend visualizations";
+            return msg;
+        }
+    },
+
+    // ── #21 Premium Coaching: Meal Planning ──
+    {
+        keywords: ['meal prep', 'meal plan', 'meal timing', 'when to eat', 'pre workout meal', 'post workout meal', 'breakfast ideas', 'dinner ideas', 'lunch ideas', 'swap meal'],
+        response: (ctx) => {
+            let msg = "🍽️ **Meal Planning Coaching:**\n";
+            if (ctx.dailyCalories) {
+                msg += `Your target: ${ctx.dailyCalories} kcal/day split as:\n`;
+                msg += `• Breakfast: ~${Math.round(ctx.dailyCalories * 0.25)} kcal\n`;
+                msg += `• Lunch: ~${Math.round(ctx.dailyCalories * 0.30)} kcal\n`;
+                msg += `• Snack: ~${Math.round(ctx.dailyCalories * 0.15)} kcal\n`;
+                msg += `• Dinner: ~${Math.round(ctx.dailyCalories * 0.30)} kcal\n\n`;
+            }
+            msg += "**Timing Tips:**\n";
+            msg += "• Pre-workout (1-2h before): Carbs + moderate protein (e.g., banana + yogurt)\n";
+            msg += "• Post-workout (within 1h): Protein + carbs (e.g., protein shake + fruit)\n";
+            msg += "• Don't like a meal? Use the 🔄 Swap button on your Diet Plan page!\n";
+            msg += "\n**Meal Prep Tips:**\n";
+            msg += "• Batch cook protein (chicken, eggs) on Sundays\n";
+            msg += "• Pre-portion snacks into containers\n";
+            msg += "• Keep 2-3 go-to recipes you enjoy";
+            return msg;
+        }
+    },
 ];
 
 const DISCLAIMER = '\n\n⚠️ _Disclaimer: This is general fitness guidance, not medical advice. Consult a healthcare professional before making significant changes to your fitness or nutrition routine._';

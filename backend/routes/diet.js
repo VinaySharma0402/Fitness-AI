@@ -39,4 +39,51 @@ router.get('/current', auth, async (req, res) => {
     }
 });
 
+// POST /api/diet/swap — Meal Swap Engine (#21)
+router.post('/swap', auth, async (req, res) => {
+    try {
+        const { mealSlot, currentMealId } = req.body;
+        const plan = await DietPlan.findOne({ userId: req.user.id }).sort({ createdAt: -1 });
+        if (!plan) return res.status(404).json({ msg: 'No diet plan found' });
+
+        const options = dietGen.getSwapOptions(mealSlot, currentMealId, plan.dailyCalories);
+        res.json({ mealSlot, alternatives: options });
+    } catch (err) {
+        res.status(500).json({ msg: 'Server error' });
+    }
+});
+
+// POST /api/diet/generate-custom — Custom Macro Ratios (#21)
+router.post('/generate-custom', auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user || !user.profileComplete) return res.status(400).json({ msg: 'Complete your profile first' });
+
+        const { proteinPct, carbsPct, fatPct } = req.body;
+        // Validate custom ratios sum to 100
+        const sum = (proteinPct || 0) + (carbsPct || 0) + (fatPct || 0);
+        if (Math.abs(sum - 100) > 1) return res.status(400).json({ msg: 'Macros must sum to 100%' });
+
+        const userTdee = tdee(user.sex, user.weightKg, user.heightCm, user.age, user.activityLevel);
+        const dailyCals = targetCalories(userTdee, user.goal, user.sex);
+
+        const customMacros = {
+            proteinG: Math.round((dailyCals * (proteinPct / 100)) / 4),
+            carbsG: Math.round((dailyCals * (carbsPct / 100)) / 4),
+            fatG: Math.round((dailyCals * (fatPct / 100)) / 9),
+        };
+
+        const meals = dietGen.generate(dailyCals, customMacros);
+        const plan = await DietPlan.create({
+            userId: user._id,
+            dailyCalories: dailyCals,
+            ...customMacros,
+            meals,
+        });
+        res.status(201).json(plan);
+    } catch (err) {
+        res.status(500).json({ msg: 'Server error', error: err.message });
+    }
+});
+
 module.exports = router;
