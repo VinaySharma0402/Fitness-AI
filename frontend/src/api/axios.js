@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API = axios.create({ baseURL: 'http://localhost:5000/api' });
+const API = axios.create({ baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api' });
 
 // Session timeout: 2 hours of inactivity
 const SESSION_TIMEOUT = 2 * 60 * 60 * 1000; // 2 hours in ms
